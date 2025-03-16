@@ -42,8 +42,7 @@ let vitals = [
   },
 ];
 
-// Fetch all vitals
-app.get("/api/patients/vitals", (req, res) => {
+app.get("/api/patients", (req, res) => {
   res.json(vitals);
 });
 
@@ -54,43 +53,7 @@ app.get("/api/patients/:id", (req, res) => {
   res.json(patient);
 });
 
-// Add a note
-app.post("/api/patients/:id/notes", (req, res) => {
-  const { text } = req.body;
-  const patient = vitals.find((p) => p.id == req.params.id);
-  if (!patient) return res.status(404).json({ message: "Patient not found" });
 
-  const newNote = { text, timestamp: new Date() };
-  patient.notes.push(newNote);
-  res.status(201).json({ message: "Note added", note: newNote });
-});
-
-// Edit a note
-app.put("/api/patients/:id/notes/:noteIndex", (req, res) => {
-  const { text } = req.body;
-  const { id, noteIndex } = req.params;
-  const patient = vitals.find((p) => p.id == id);
-
-  if (!patient || !patient.notes[noteIndex]) {
-    return res.status(404).json({ message: "Note not found" });
-  }
-
-  patient.notes[noteIndex].text = text;
-  res.json({ message: "Note updated", note: patient.notes[noteIndex] });
-});
-
-// Delete a note
-app.delete("/api/patients/:id/notes/:noteIndex", (req, res) => {
-  const { id, noteIndex } = req.params;
-  const patient = vitals.find((p) => p.id == id);
-
-  if (!patient || !patient.notes[noteIndex]) {
-    return res.status(404).json({ message: "Note not found" });
-  }
-
-  patient.notes.splice(noteIndex, 1);
-  res.json({ message: "Note deleted" });
-});
 
 // Simulate real-time updates every 5 seconds
 setInterval(() => {
@@ -98,7 +61,7 @@ setInterval(() => {
     const newVitals = {
       heartRate: Math.floor(Math.random() * (110 - 55) + 55),
       temperature: (Math.random() * (38.5 - 36) + 36).toFixed(1),
-      spo2: Math.floor(Math.random() * (100 - 90) + 90),
+      spo2: Math.floor(Math.random() * (100 - 85) + 85),
     };
 
     return {
