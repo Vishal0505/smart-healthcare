@@ -1,5 +1,5 @@
-import admin from "../config/firebaseAdmin.js";
-import db from "../config/firestore.js";
+import admin from "firebase-admin";
+import db from "../config/firebaseConfig.js";
 
 // Middleware to authenticate user using Firebase ID Token
 export const authenticateUser = async (req, res, next) => {
@@ -18,8 +18,8 @@ export const authenticateUser = async (req, res, next) => {
 // Middleware to authorize user based on Firestore roles
 export const authorizeRole = (allowedRoles) => async (req, res, next) => {
     try {
-        const roleDoc = await db.collection("roles").doc(req.user.uid).get();
-        if (!roleDoc.exists || !allowedRoles.includes(roleDoc.data().role)) {
+        const userDoc = await db.collection("users").doc(req.user.uid).get();
+        if (!userDoc.exists || !allowedRoles.includes(userDoc.data().role)) {
             return res.status(403).json({ error: "Access denied. Insufficient permissions." });
         }
         next();
