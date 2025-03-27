@@ -1,12 +1,14 @@
 const admin = require("firebase-admin");
+const { getFirestore } = require("firebase-admin/firestore");
+const serviceAccount = require("./serviceAccountKey.json");
 
-// Agar pehle se initialize nahi hai toh initialize karo
+// Firebase Admin SDK initialize
 if (!admin.apps.length) {
     admin.initializeApp({
-        credential: admin.credential.cert(require("./serviceAccountKey.json")),
+        credential: admin.credential.cert(serviceAccount)
     });
 }
 
-const db = admin.firestore();
+const db = getFirestore();
 
 module.exports = { admin, db };

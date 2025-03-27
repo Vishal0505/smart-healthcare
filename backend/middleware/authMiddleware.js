@@ -1,8 +1,7 @@
-import admin from "firebase-admin";
-import db from "../config/firebaseConfig.js";
+const { admin, db } = require("../config/firebaseConfig");
 
 // Middleware to authenticate user using Firebase ID Token
-export const authenticateUser = async (req, res, next) => {
+const authenticateUser = async (req, res, next) => {
     try {
         const token = req.headers.authorization?.split(" ")[1];
         if (!token) return res.status(401).json({ error: "Unauthorized, token missing" });
@@ -16,7 +15,7 @@ export const authenticateUser = async (req, res, next) => {
 };
 
 // Middleware to authorize user based on Firestore roles
-export const authorizeRole = (allowedRoles) => async (req, res, next) => {
+const authorizeRole = (allowedRoles) => async (req, res, next) => {
     try {
         const userDoc = await db.collection("users").doc(req.user.uid).get();
         if (!userDoc.exists || !allowedRoles.includes(userDoc.data().role)) {
@@ -27,3 +26,5 @@ export const authorizeRole = (allowedRoles) => async (req, res, next) => {
         res.status(500).json({ error: "Error checking role" });
     }
 };
+
+module.exports = { authenticateUser, authorizeRole };
